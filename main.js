@@ -184,7 +184,7 @@ controller.addEventListener('selectstart', () => {
     // Simula movimiento hacia adelante
     const direction = new THREE.Vector3();
     camera.getWorldDirection(direction);
-    player.position.addScaledVector(direction, 0.5); // Avanza 0.5 unidades
+    player.position.addScaledVector(direction, 2); // Avanza 0.5 unidades
 });
 
 // Animación
