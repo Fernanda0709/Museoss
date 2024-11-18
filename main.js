@@ -179,13 +179,37 @@ const player = new THREE.Group();
 player.add(camera);
 scene.add(player);
 
-// Evento para detectar movimiento del controlador
+let isPressed = false;
+let speed = 0.05; // Controla la velocidad de movimiento
+
 controller.addEventListener('selectstart', () => {
-    // Simula movimiento hacia adelante
-    const direction = new THREE.Vector3();
-    camera.getWorldDirection(direction);
-    player.position.addScaledVector(direction, 2); // Avanza 0.5 unidades
+    isPressed = true;
 });
+
+controller.addEventListener('selectend', () => {
+    isPressed = false;
+});
+
+function update() {
+    if (isPressed) {
+        // Dirección hacia adelante en la que el jugador está mirando
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+
+        // Movimiento constante hacia adelante mientras se mantiene el botón presionado
+        const movement = direction.multiplyScalar(speed);
+
+        // Actualizamos la posición del jugador
+        player.position.add(movement);
+    }
+
+    // Llamar a esta función en cada frame para actualizar el movimiento
+    requestAnimationFrame(update);
+}
+
+update();
+
+
 
 // Animación
 function animate() {
