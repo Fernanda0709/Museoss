@@ -169,25 +169,84 @@ const materialS = {
 
 loadFBXModel('Museo.fbx', { x:1 , y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, materialS);
 
-const controller = renderer.xr.getController(0); // Primer controlador
-scene.add(controller);
 
 // Grupo para representar al jugador
 const player = new THREE.Group();
 player.add(camera);
 scene.add(player);
 
-// Evento para detectar movimiento del controlador
+// Variables para el movimiento del jugador
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+
+// Listener para el controlador (VR)
 controller.addEventListener('selectstart', () => {
-    // Simula movimiento hacia adelante
-    const direction = new THREE.Vector3();
-    camera.getWorldDirection(direction);
-    player.position.addScaledVector(direction, 0.5); // Avanza 0.5 unidades
+    moveForward = true;
 });
+controller.addEventListener('selectend', () => {
+    moveForward = false;
+});
+
+// Eventos del teclado para mover al jugador
+document.addEventListener('keydown', (event) => {
+    switch (event.code) {
+        case 'ArrowUp':
+        case 'KeyW':
+            moveForward = true;
+            break;
+        case 'ArrowDown':
+        case 'KeyS':
+            moveBackward = true;
+            break;
+        case 'ArrowLeft':
+        case 'KeyA':
+            moveLeft = true;
+            break;
+        case 'ArrowRight':
+        case 'KeyD':
+            moveRight = true;
+            break;
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    switch (event.code) {
+        case 'ArrowUp':
+        case 'KeyW':
+            moveForward = false;
+            break;
+        case 'ArrowDown':
+        case 'KeyS':
+            moveBackward = false;
+            break;
+        case 'ArrowLeft':
+        case 'KeyA':
+            moveLeft = false;
+            break;
+        case 'ArrowRight':
+        case 'KeyD':
+            moveRight = false;
+            break;
+    }
+});
+
+// Velocidad de movimiento
+const speed = 0.1;
 
 // Animación
 function animate() {
     renderer.setAnimationLoop(() => {
+        // Movimiento del jugador
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+
+        if (moveForward) player.position.addScaledVector(direction, speed);
+        if (moveBackward) player.position.addScaledVector(direction.negate(), speed);
+        if (moveLeft) player.position.x -= speed;
+        if (moveRight) player.position.x += speed;
+
         renderer.render(scene, camera);
     });
 }
