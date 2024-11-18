@@ -169,7 +169,6 @@ const materialS = {
 
 loadFBXModel('Museo.fbx', { x:1 , y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, materialS);
 
-
 // Grupo para representar al jugador
 const player = new THREE.Group();
 player.add(camera);
@@ -181,6 +180,8 @@ let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
 
+// Listener para el controlador (VR)
+// Crear un controlador para VR
 const controller = renderer.xr.getController(0); // Índice 0 para el primer controlador
 scene.add(controller);
 
@@ -261,3 +262,4 @@ function animate() {
 
 // Iniciar animación
 animate();
+
