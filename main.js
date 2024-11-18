@@ -181,13 +181,21 @@ let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
 
-// Listener para el controlador (VR)
+const controller = renderer.xr.getController(0); // Índice 0 para el primer controlador
+scene.add(controller);
+
+// Opcional: si necesitas un segundo controlador
+// const controller2 = renderer.xr.getController(1);
+// scene.add(controller2);
+
+// Listener para eventos del controlador
 controller.addEventListener('selectstart', () => {
     moveForward = true;
 });
 controller.addEventListener('selectend', () => {
     moveForward = false;
 });
+
 
 // Eventos del teclado para mover al jugador
 document.addEventListener('keydown', (event) => {
