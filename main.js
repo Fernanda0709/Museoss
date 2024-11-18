@@ -13,7 +13,7 @@ renderer.xr.enabled = true; // Habilitar realidad virtual
 document.body.appendChild(renderer.domElement);
 document.body.appendChild(VRButton.createButton(renderer));
 
-camera.position.set(-10, 2, 30);
+camera.position.set(0, 1.6, 5); // Altura estándar de usuario VR
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
@@ -169,56 +169,30 @@ const materialS = {
 
 loadFBXModel('Museo.fbx', { x:1 , y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, materialS);
 
+
+// VR: Configurar el controlador de movimiento
+const controller = renderer.xr.getController(0); // Primer controlador
+scene.add(controller);
+
+// Grupo para representar al jugador
 const player = new THREE.Group();
 player.add(camera);
 scene.add(player);
 
-// Variables para el movimiento del jugador
-let moveForward = false;
-let moveBackward = false;
-let moveLeft = false;
-let moveRight = false;
-
-// Configurar el controlador principal
-const controller = renderer.xr.getController(0); // Controlador 0
-scene.add(controller);
-
-// Listener para manejar la entrada de los joysticks
-controller.addEventListener('connected', (event) => {
-    console.log('Controlador conectado:', event.data);
-    controller.userData.inputSource = event.data; // Almacena la fuente de entrada
+// Evento para detectar movimiento del controlador
+controller.addEventListener('selectstart', () => {
+    // Simula movimiento hacia adelante
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
+    player.position.addScaledVector(direction, 0.5); // Avanza 0.5 unidades
 });
 
-// Detectar y usar los joysticks en el bucle de animación
-function handleJoystickInput(controller) {
-    const inputSource = controller.userData.inputSource;
-    if (inputSource && inputSource.gamepad) {
-        const gamepad = inputSource.gamepad;
-
-        // Ejes del joystick (array con valores [-1, 1])
-        const axes = gamepad.axes;
-        if (axes.length >= 2) {
-            const joystickX = axes[0]; // Movimiento horizontal
-            const joystickY = axes[1]; // Movimiento vertical
-
-            // Usa los valores del joystick para mover algo
-            const speed = 0.1; // Velocidad de movimiento
-            player.position.x += joystickX * speed;
-            player.position.z += joystickY * speed;
-        }
-    }
-}
-
-// Bucle de animación
+// Animación
 function animate() {
     renderer.setAnimationLoop(() => {
-        handleJoystickInput(controller); // Detectar entrada del joystick
         renderer.render(scene, camera);
     });
 }
 
+// Iniciar animación
 animate();
-
-
-
-
