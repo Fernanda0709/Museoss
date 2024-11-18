@@ -169,7 +169,6 @@ const materialS = {
 
 loadFBXModel('Museo.fbx', { x:1 , y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, materialS);
 
-// Grupo para representar al jugador
 const player = new THREE.Group();
 player.add(camera);
 scene.add(player);
@@ -179,6 +178,7 @@ let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
+
 // Configurar el controlador principal
 const controller = renderer.xr.getController(0); // Controlador 0
 scene.add(controller);
@@ -186,27 +186,25 @@ scene.add(controller);
 // Listener para manejar la entrada de los joysticks
 controller.addEventListener('connected', (event) => {
     console.log('Controlador conectado:', event.data);
+    controller.userData.inputSource = event.data; // Almacena la fuente de entrada
 });
 
 // Detectar y usar los joysticks en el bucle de animación
 function handleJoystickInput(controller) {
-    const session = renderer.xr.getSession(); // Sesión activa de WebXR
-    if (session) {
-        const inputSource = session.inputSources[0]; // Primer controlador activo
-        if (inputSource && inputSource.gamepad) {
-            const gamepad = inputSource.gamepad;
+    const inputSource = controller.userData.inputSource;
+    if (inputSource && inputSource.gamepad) {
+        const gamepad = inputSource.gamepad;
 
-            // Ejes del joystick (array con valores [-1, 1])
-            const axes = gamepad.axes;
-            if (axes.length >= 2) {
-                const joystickX = axes[0]; // Movimiento horizontal
-                const joystickY = axes[1]; // Movimiento vertical
+        // Ejes del joystick (array con valores [-1, 1])
+        const axes = gamepad.axes;
+        if (axes.length >= 2) {
+            const joystickX = axes[0]; // Movimiento horizontal
+            const joystickY = axes[1]; // Movimiento vertical
 
-                // Usa los valores del joystick para mover algo
-                const speed = 0.1; // Velocidad de movimiento
-                camera.position.x += joystickX * speed;
-                camera.position.z += joystickY * speed;
-            }
+            // Usa los valores del joystick para mover algo
+            const speed = 0.1; // Velocidad de movimiento
+            player.position.x += joystickX * speed;
+            player.position.z += joystickY * speed;
         }
     }
 }
@@ -220,6 +218,7 @@ function animate() {
 }
 
 animate();
+
 
 
 
